@@ -1,8 +1,8 @@
 # Import python packages
 import streamlit as st
 import os
-from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
+cnx = st.connection("snowflake")
 
 name_on_order = st.text_input('Name on Smoothie: ')
 if name_on_order:
@@ -25,7 +25,7 @@ st.write(
 #st.write("You favorite fruit:", option)
 
 
-session = get_active_session()
+session = cnx.session()
 
 my_dataframe = session.table("smoothies.public.fruit_options").select('FRUIT_NAME')
 #st.dataframe(data=my_dataframe, use_container_width=True)
