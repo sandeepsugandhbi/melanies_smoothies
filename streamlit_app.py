@@ -1,8 +1,8 @@
 # Import python packages
 import streamlit as st
 import os
+from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
-cnx = st.connection("snowflake")
 
 name_on_order = st.text_input('Name on Smoothie: ')
 if name_on_order:
@@ -25,7 +25,7 @@ st.write(
 #st.write("You favorite fruit:", option)
 
 
-session = cnx.session()
+session = get_active_session()
 
 my_dataframe = session.table("smoothies.public.fruit_options").select('FRUIT_NAME')
 #st.dataframe(data=my_dataframe, use_container_width=True)
@@ -57,11 +57,14 @@ if ingredients_list:
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients, name_on_order )
                     values ('""" + ingredients_string + """','""" + name_on_order + """')"""
 
-import requests  
-smoothiefroot_response = requests.get("[https://my.smoothiefroot.com/api/fruit/watermelon](https://my.smoothiefroot.com/api/fruit/watermelon)")  
-st.text(smoothiefroot_response)
     st.write(my_insert_stmt)
     time_to_instert = st.button('Submit Order')
     if time_to_instert:
         session.sql(my_insert_stmt).collect()
         st.success('Your Smoothie is ordered, '+ name_on_order +'!', icon="✅")
+
+import requests  
+smoothiefroot_response = requests.get("[https://my.smoothiefroot.com/api/fruit/watermelon](https://my.smoothiefroot.com/api/fruit/watermelon)")  
+st.text(smoothiefroot_response)
+
+
