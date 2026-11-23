@@ -1,7 +1,6 @@
 # Import python packages
 import streamlit as st
 import os
-from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col,when_matched
 
  
@@ -10,8 +9,8 @@ st.title(f":cup_with_straw: Pending Smoothie Orders :cup_with_straw: {st.__versi
 st.write(
   """**Orders that need to be filled.** """
 )
-
-session = get_active_session()
+cnx = st.connection("snowflake")
+session = cnx.session()
 my_dataframe = session.table("smoothies.public.orders") \
     .filter(col("ORDER_FILLED") == False) \
     .collect()
